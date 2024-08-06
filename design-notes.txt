@@ -35,6 +35,39 @@ DOM
     SOOOOO... go to try to use Highlighted text as choosing
     a cell.. this could get very interesting..
 
+Okay... 10,000 pre elements is fine.. browser wants to crash
+        at unresponsive script at 10x at 100k pre elements
+
+
+------
+getSelection...etc NOTES
+-----------------
+// getSelection
+// getSelection.baseNode.parentElement => 
+        // will reference the row span,
+        // which coontains the row ID
+
+        // 25th row
+        // selction.achorOffset is the start 
+        // selection.focusOffset is end
+
+// What if only cells within a row may be highlighted and cleared
+// And as a group rows get cleared and eliminated
+// Or something like only 2 or 3 may be cleared at a time
+// Maybe there's a delay before you may clear your next
+// cell or set of cells
+
+There may be a need to then inject a <pre> element
+at the index of the highlighted text.. attach functionality/event
+listeners, and then apply changes in reverse back to the original
+string and remove the injected <pre>
+
+Do I create a <pre> row id with index, assign pre id and 
+class in order to alter via CSS.
+
+
+
+
 
 
 

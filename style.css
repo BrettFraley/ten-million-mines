@@ -18,12 +18,6 @@ header {
     border: dashed 2px #626464;
     margin: 5px;
     display: block;
+    letter-spacing: 0.7em;
+    overflow-wrap: break-word;
 }
-
-.field-row pre {
-    margin: 0;
-    padding: 2px;
-    display: inline-block;
-}
-
-
