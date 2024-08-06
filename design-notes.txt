@@ -1,0 +1,39 @@
+10 MILLION MINES PROJECT DESIGN AND NOTES
+
+- Find out how many 'cells' I can render in the dom
+    - 10 million chars
+    - 10 million pixels
+    - probably not individual elements
+        (have to have events, though)
+        what do you assign listeners to?
+
+- A 'cell' can be empty, have a mine, or some other item(s)?
+
+- On click -> send a coordinate that is associated directly
+              with a DB -> table -> row -> cell
+
+            -> query UPDATE
+
+            TRIGGERS SSE of updated cell location in DOM
+            
+            -> 
+            NOTE: If there were 1000 spans each with 
+                  100 whitespace chars = 100,000
+
+                  10,000 spans @ 100 wide == 1m
+                  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
