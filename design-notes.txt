@@ -21,6 +21,27 @@
                   100 whitespace chars = 100,000
 
                   10,000 spans @ 100 wide == 1m
+
+- HTML/CSS/JS
+- API / And SSE event endpoint in Crystal
+
+--------------------------------
+DOM
+  - So far using 100 spans with 100 pre elements,
+    but would like to use just 100 char strings,
+    which limits dom access and traversal and styling..etc.
+    But I don't want to render or use 10 Million elements
+
+    SOOOOO... go to try to use Highlighted text as choosing
+    a cell.. this could get very interesting..
+
+
+
+
+
+
+
+
                   
 
 
