@@ -48,22 +48,23 @@ const mineGame = {
         field.addEventListener('click', () => {
             const selection = document.getSelection()
             // text in a row is highlighted    
-            if (!selection.isCollapsed) {
+            if (selection.type === "Range" || selection.type === "Caret") {
 
-                ancOff = selection.anchorOffset
-                focOff = selection.focusOffset
+                // A single cell is highlighted, the offset is 1 or -1 
+                // depending on if the cursor selected for the right or
+                // the left side of the cell.
+                offset = selection.anchorOffset - selection.focusOffset
+                singleCellSelected = offset === 1 || offset === -1
 
-                // single cell is highlighted
-                if (focOff - ancOff === 1) {
+                if (singleCellSelected) {
                     let row = selection.baseNode.parentElement
                     let rowId = row.attributes.id.value.split('-')[0]
                     console.log(rowId)
-                    console.log(focOff)
+                    console.log(selection.focusOffset)
 
-                    mineGame.updateFieldRowCell(rowId, focOff)
+                    mineGame.updateFieldRowCell(rowId, selection.focusOffset)
                 }
 
-                
             }
         }, false)
 

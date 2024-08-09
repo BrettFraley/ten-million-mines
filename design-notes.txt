@@ -65,6 +65,29 @@ string and remove the injected <pre>
 Do I create a <pre> row id with index, assign pre id and 
 class in order to alter via CSS.
 
+Front End Flow
+---------------
+The back end should provide a singular static game of
+the mine layout. Pressing begin should load that data
+calling init on the game and loading the game.
+
+Highlighting a char, while there will be options of actions to take 
+when highlighting a char, for now a cell will simply be revealed..
+    - Is it a mine or not
+    - If mine, lose.. I don't know what that entails yet
+    - Reveal state, alter char, update data
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
