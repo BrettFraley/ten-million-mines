@@ -77,6 +77,8 @@ when highlighting a char, for now a cell will simply be revealed..
     - If mine, lose.. I don't know what that entails yet
     - Reveal state, alter char, update data
 
+- First: function to change text that is selected
+
 
 
 

@@ -53,17 +53,31 @@ const mineGame = {
                 // A single cell is highlighted, the offset is 1 or -1 
                 // depending on if the cursor selected for the right or
                 // the left side of the cell.
-                offset = selection.anchorOffset - selection.focusOffset
-                singleCellSelected = offset === 1 || offset === -1
-
+                const anchorOffset = selection.anchorOffset
+                const focusOffset = selection.focusOffset
+                const offsetRange =  focusOffset - anchorOffset || 0
+                const singleCellSelected = offsetRange === 1 || offsetRange === -1
+                
+                // Only 1 cell is selected.
                 if (singleCellSelected) {
-                    let row = selection.baseNode.parentElement
-                    let rowId = row.attributes.id.value.split('-')[0]
-                    console.log(rowId)
-                    console.log(selection.focusOffset)
+                    
+                    // If cell 0 is selected from the right the 
+                    // offset will be off by 1, so decrement in this edge case.
+                    let cellIndex = anchorOffset
+                    cellIndex -= offsetRange === -1 ? 1 : 0
 
-                    mineGame.updateFieldRowCell(rowId, selection.focusOffset)
-                }
+                    // It's 'undistrurbed', a "#"
+                     if (mineGame.selectionCharIs('#', selection, cellIndex)) {
+
+                        let row = selection.baseNode.parentElement
+                        let rowId = row.attributes.id.value.split('-')[0]
+
+                        console.log(rowId)
+                        console.log(cellIndex, offsetRange, anchorOffset)
+
+                        mineGame.updateFieldRowCell(rowId, cellIndex) // HERE
+}
+                    }
 
             }
         }, false)
@@ -73,17 +87,19 @@ const mineGame = {
     updateFieldRowCell: (rowId, idx) => {
         const row = dom.getEl(`${rowId}-mine-field-row`)
         let cur = row.innerText
-        console.log(typeof cur)
-        console.log(cur[idx])
         row.innerText = cur
-        
+    },
+
+    selectionCharIs(char, selection, index) {
+        if (char && selection && selection.anchorNode) {
+            console.log(index)
+            console.log('char val:', selection.anchorNode.wholeText[index])
+            return selection.anchorNode.wholeText[index] === char
+        }
+        else {
+            throw Error(`Bad input to selectionCharIs:  char: ${char}, selection: ${selection}`)
+        }
     }
-
-
-
-
-
-
 
 }
 
