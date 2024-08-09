@@ -14,7 +14,7 @@ header {
 .field-row {
     padding: 5px;
     background-color: #000;
-    color: #626464;
+    color: #626464; /* #82e2e2; */
     border: dashed 2px #626464;
     margin: 5px;
     display: block;

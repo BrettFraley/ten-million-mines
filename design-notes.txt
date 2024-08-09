@@ -91,6 +91,36 @@ player clears a spot and may pick up mine difussion kits,
 if not, booom
 
 
+----------------------------
+NOTES pulled from comments on day 2/3 of dev:
+-----------------------------------------------
+// NOW: 
+// when user selects a cell, check if that row and cell is a min
+// NOTE: Due to having a 2 integer array for every mine, meaning potentially
+// 2 million arrays in one array, it may be best to have an enclosing array
+// or structure for every row in the field, instead of searching the whole game field.
+// All I need to search is an array for a single row...
+// meaning, I am already representing the mines wrong, but this is just the front
+// end POC test part and the mine data will come from the server but it still
+// makes sense to have an array for each row -> 1000 rows.. but then each row would 
+// need  10k chars, which means 10k at mine density of 20% would be 2,000 members
+// per row
+
+
+// Sample / Dev / Test map of field..for mines..or other objects
+// Real game field's will be served from server
+
+// Stats at top: mines cleared, mines exploded, mines left...etc.
+
+
+
+// BACKBURNER TASK:
+    // Buid in auto simulation of users and games,
+    // particularly for end to end / load tests on SSE server
+
+
+
+
 
 
 
