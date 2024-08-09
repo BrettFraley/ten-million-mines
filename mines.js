@@ -38,11 +38,13 @@ const generateField = config => {
 
 const CONFIG = {
     FIELD_ROW_COUNT: 100,
-    FIELD_ROW_CELL_COUNT: 100
+    FIELD_ROW_CELL_COUNT: 100,
+    MINE_DENSITY_PERCENTAGE: 20,
 }
 
 const mineGame = {
     init: () => {
+
         let field = generateField(CONFIG)
         
         field.addEventListener('click', () => {
@@ -66,19 +68,15 @@ const mineGame = {
                     let cellIndex = anchorOffset
                     cellIndex -= offsetRange === -1 ? 1 : 0
 
-                    // It's 'undistrurbed', a "#"
+                    // It's an 'undistrurbed' "#" char
                      if (mineGame.selectionCharIs('#', selection, cellIndex)) {
 
                         let row = selection.baseNode.parentElement
                         let rowId = row.attributes.id.value.split('-')[0]
 
-                        console.log(rowId)
-                        console.log(cellIndex, offsetRange, anchorOffset)
-
-                        mineGame.updateFieldRowCell(rowId, cellIndex) // HERE
-}
+                        mineGame.updateFieldRowCell(rowId, cellIndex)
                     }
-
+                }
             }
         }, false)
 
@@ -87,7 +85,8 @@ const mineGame = {
     updateFieldRowCell: (rowId, idx) => {
         const row = dom.getEl(`${rowId}-mine-field-row`)
         let cur = row.innerText
-        row.innerText = cur
+        console.log("GOT:", cur[idx])
+        // replace this row / splice in new char if mine or cleared
     },
 
     selectionCharIs(char, selection, index) {
@@ -99,26 +98,56 @@ const mineGame = {
         else {
             throw Error(`Bad input to selectionCharIs:  char: ${char}, selection: ${selection}`)
         }
-    }
+    },
 
+    getTotalMines: config => {
+        const availableCells = config.FIELD_ROW_COUNT * config.FIELD_ROW_CELL_COUNT
+        const perc = config.MINE_DENSITY_PERCENTAGE / 100            
+        return availableCells * perc
+    },
+
+    // When generating the mine field data,
+    // discard duplicates if same cell gets assigned
+    generateMines: () => {
+        let mines = [];
+        console.log('generate mines')
+        const totalMines = mineGame.getTotalMines(CONFIG)
+        for (let i = 0; i < totalMines; i++) {
+            const randRow = Math.floor(Math.random() * CONFIG.FIELD_ROW_COUNT)
+            const randCell = Math.floor(Math.random() * CONFIG.FIELD_ROW_CELL_COUNT)
+            mines.push([randRow, randCell])
+
+            // const mine = { row: randRow, cell: randCell } NOT YET...
+        }
+
+        console.log(mines)
+    }
 }
 
 mineGame.init()
+mineGame.generateMines()
 
-// getSelection
-// getSelection.baseNode.parentElement => 
-        // will reference the row span,
-        // which coontains the row ID
 
-        // 25th row
-        // selction.achorOffset is the start 
-        // selection.focusOffset is end
+// Sample / Dev / Test map of field..for mines..or other objects
+// Real game field's will be served from server
 
-// What if only cells within a row may be highlighted and cleared
-// And as a group rows get cleared and eliminated
-// Or something like only 2 or 3 may be cleared at a time
-// Maybe there's a delay before you may clear your next
-// cell or set of cells
+// Stats at top: mines cleared, mines exploded, mines left...etc.
+
+// Row <=  FIELD_ROW_COUNT
+// Cell <= FIELD_ROW_CELL_COUNT
+
+// TOTAL_AVAILABLE_CELLS = FIELD_ROW_COUNT * FIELD_ROW_CELL_COUNT
+
+// Depending on the total available cells, what percentage of
+// the field should contain mines? put this in config and play..
+// Make a poll once I start telling people about this project!
+
+
+
+
+// BACKBURNER TASK:
+    // Buid in auto simulation of users and games,
+    // particularly for end to end / load tests on SSE server
 
 
 

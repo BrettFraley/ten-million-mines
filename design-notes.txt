@@ -76,8 +76,19 @@ when highlighting a char, for now a cell will simply be revealed..
     - Is it a mine or not
     - If mine, lose.. I don't know what that entails yet
     - Reveal state, alter char, update data
-
 - First: function to change text that is selected
+
+// Keeping cell state if uncovered or not using a negative cell coord..
+----------------------------------------------------------------------------
+Row 1, Cell 50, becomes -50...or column 50 of the row becomes "X,Y,Z" State
+
+
+WOULD BE COOL If
+----------------
+
+player clears a spot and may pick up mine difussion kits,
+
+if not, booom
 
 
 
