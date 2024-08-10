@@ -1,4 +1,4 @@
-dom = {
+const dom = {
     getEl: id => document.getElementById(id),
     createEl: type => document.createElement(type),
     appendEl: (parentId, el) => {
@@ -6,7 +6,8 @@ dom = {
         parent.appendChild(el)
     }
 }
-// generateField returns a 'field' element
+
+// generateField returns a 'field' element 
 // containing  all rows and game 'cells'
 // NOTE: TODO move mine gen functions here within gen field
 const generateField = config => {
@@ -43,6 +44,12 @@ const CONFIG = {
     FIELD_ROW_CELL_COUNT: 100,
     MINE_DENSITY_PERCENTAGE: 20,
 }
+
+const beginButton = dom.getEl('load-field')
+
+beginButton.addEventListener('click', () => {
+    mineGame.init()
+}, false)
 
 const mineGame = {
     init: () => {
@@ -136,4 +143,4 @@ const mineGame = {
 }
 
 mineGame.init()
-const mines = mineGame.generateMines()
+

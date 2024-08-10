@@ -1,42 +1,45 @@
 10 MILLION MINES PROJECT DESIGN AND NOTES
 
+Stack:
+- HTML/CSS/JS
+- API / And SSE event endpoint in Crystal
+
 - Find out how many 'cells' I can render in the dom
-    - 10 million chars
-    - 10 million pixels
+    - 10 million chars (UPDATE: went with chars not pixels)
+    - 10 million pixels 
     - probably not individual elements
         (have to have events, though)
         what do you assign listeners to?
 
+        UPDATE: Using span elements containing strings of "#" chars
+
 - A 'cell' can be empty, have a mine, or some other item(s)?
 
 - On click -> send a coordinate that is associated directly
-              with a DB -> table -> row -> cell
+              with a DB -> table -> row -> cell 
 
+--------------------------------------------------------------
             -> query UPDATE
-
-            TRIGGERS SSE of updated cell location in DOM
+            -> TRIGGERS SSE of updated cell location in DOM to all connections
             
-            -> 
             NOTE: If there were 1000 spans each with 
                   100 whitespace chars = 100,000
 
-                  10,000 spans @ 100 wide == 1m
+                  10,000 spans @ 100 wide == 1m (UPDATE: still thinking about this)
 
-- HTML/CSS/JS
-- API / And SSE event endpoint in Crystal
-
---------------------------------
 DOM
-  - So far using 100 spans with 100 pre elements,
+  - So far using 100 spans with 100 pre elements (UPDATE: am using the 100 char strings mentioned on next line)
     but would like to use just 100 char strings,
     which limits dom access and traversal and styling..etc.
     But I don't want to render or use 10 Million elements
+    (UPDATE: This appraoch and DOM stuff is a WIP and still exploring options)
 
     SOOOOO... go to try to use Highlighted text as choosing
-    a cell.. this could get very interesting..
+    a cell.. this could get very interesting.. (UPDATE: I dide this and it works and is awesome!)
 
 Okay... 10,000 pre elements is fine.. browser wants to crash
-        at unresponsive script at 10x at 100k pre elements
+        at unresponsive script at 10x at 100k pre elements...
+        YEP..so no go on 100k html elements
 
 
 ------
@@ -57,14 +60,23 @@ getSelection...etc NOTES
 // Maybe there's a delay before you may clear your next
 // cell or set of cells
 
+--------------------------------------------------------
+CRUCIAL CONSIDERATION FOR THE AESTHTICS OF THE GAME
+because I'll be to attach gameplay functionality, style, 
+events, etc to individual cells 
+-----------------------------------------------------
 There may be a need to then inject a <pre> element
 at the index of the highlighted text.. attach functionality/event
 listeners, and then apply changes in reverse back to the original
 string and remove the injected <pre>
 
 Do I create a <pre> row id with index, assign pre id and 
-class in order to alter via CSS.
+lass in order to alter via CSS?
+--------------------------------------------------------------
 
+
+
+----------------
 Front End Flow
 ---------------
 The back end should provide a singular static game of
@@ -76,26 +88,27 @@ when highlighting a char, for now a cell will simply be revealed..
     - Is it a mine or not
     - If mine, lose.. I don't know what that entails yet
     - Reveal state, alter char, update data
-- First: function to change text that is selected
+- First: function to change text that is selected [D O N E :)]
 
 // Keeping cell state if uncovered or not using a negative cell coord..
 ----------------------------------------------------------------------------
 Row 1, Cell 50, becomes -50...or column 50 of the row becomes "X,Y,Z" State
+- This is for representing state in the database. A negative number can represent
+an exposed mine.. but we still know that it is cell 50...or using decimal..
+multiple states may be represented using the single index, eg: 
+50.1 is an exposed mine, 50.2: clear 50.3: has mine diffusion pack...etc
+SO...Cn still query and update tables with a single row index and specific column
 
 
 WOULD BE COOL If
 ----------------
-
-player clears a spot and may pick up mine difussion kits,
-
-if not, booom
-
+player clears a spot and may pick up mine difussion kits, if not, booom
 
 ----------------------------
 NOTES pulled from comments on day 2/3 of dev:
 -----------------------------------------------
 // NOW: 
-// when user selects a cell, check if that row and cell is a min
+// when user selects a cell, check if that row and cell is a mine
 // NOTE: Due to having a 2 integer array for every mine, meaning potentially
 // 2 million arrays in one array, it may be best to have an enclosing array
 // or structure for every row in the field, instead of searching the whole game field.
@@ -105,55 +118,51 @@ NOTES pulled from comments on day 2/3 of dev:
 // makes sense to have an array for each row -> 1000 rows.. but then each row would 
 // need  10k chars, which means 10k at mine density of 20% would be 2,000 members
 // per row
-
-
-// Sample / Dev / Test map of field..for mines..or other objects
-// Real game field's will be served from server
+------------------------------------------------------------------------------
 
 // Stats at top: mines cleared, mines exploded, mines left...etc.
-
-
 
 // BACKBURNER TASK:
     // Buid in auto simulation of users and games,
     // particularly for end to end / load tests on SSE server
 
+// Ridiculous idea:
+Insert spans around Mine chars for styling, but strip them
+when parsing and to maintain order of the mine vs empty map of the game field,
+and then put them back again???
+
+document.documentElement.style.setProperty("--highlight-color", color);
+
+From bennettfreely.com/clippy
+
+CSS clip-path maker patterns I made:
+--------
+clip-path: polygon(0 0, 53% 49%, 96% 57%, 0 100%, 74% 92%, 100% 74%, 0 54%, 100% 1%);
+
+AUG 10th STATUS NOTES:
+--------------------------
 
 
 
+TODAY:
+- Review where I'm at
+- Define next steps
+- Make coffee
+- Do next steps
 
+NEXT STEPS
+-----------
+- call game init when begin button is clicked
 
+- think about moving current mine gen stuff
+to an object just for dev/testing...Make it
+switchable between using the server generated game
+and client generated...for dev..
 
+- consider UI / basic stats and basic menu 
+earlier than later so they're there
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+- Build the SSE server and field update 
+endpoint with a single DB / limited mine density
+of 20% and 10,000 'field cells'
 

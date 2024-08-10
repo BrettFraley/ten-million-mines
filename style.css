@@ -13,11 +13,16 @@ header {
 
 .field-row {
     padding: 5px;
-    background-color: #000;
+    background-color: #778f72;
     color: #626464; /* #82e2e2; */
     border: dashed 2px #626464;
     margin: 5px;
     display: block;
     letter-spacing: 0.7em;
     overflow-wrap: break-word;
+    text-shadow: 5px 5px 5px red;
+}
+
+::selection {
+    background-color: red;
 }
