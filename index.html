@@ -17,12 +17,20 @@
     </header>
 
     <div id="game-wrapper">
-        <h2>Welcome To The Field!</h2>
-        <button id="load-field">Begin</button>
+        <h2 id="welcome-message">Welcome To The Field!</h2>
+        <button id="load-field-button">Begin</button>
 
-      <div id="field">
+        <div id="mine-stats">
+          <!-- mines cleared, mines exploded, mines left...etc. -->
+          <p>
+            <span id="mines-cleared">Cleared</span>
+            <span id="mines-exploded">Exploded</span>
+            <span id="mines-left">Left</span>
+          </p>
+        </div>
 
-      </div>
+        <div id="action-box"></div>
+        <div id="field"></div>
 
     </div>
     

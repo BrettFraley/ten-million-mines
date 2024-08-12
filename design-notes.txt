@@ -148,7 +148,7 @@ TODAY:
 NEXT STEPS
 -----------
 - call game init when begin button is clicked
-      DONE - but this will actually load current game data/state [DONE]
+  but this will actually load current game data/state [DONE]
 
 - think about moving current mine gen stuff
 to an object just for dev/testing...Make it
@@ -162,6 +162,8 @@ For instance, we probably don't want 10,000 span elements.. [DONE BUT TO BE CONT
 YOU ARE HERE...add some stats.. then begin server ....
 - consider UI / basic stats and basic menu 
 earlier than later so they're there
+  - hide begin and welcome to the field
+  - put absolute positioned stats box at top
 
 - Build the SSE server and field update 
 endpoint with a single DB / limited mine density
@@ -183,4 +185,12 @@ Notes form initial sanity checks:
 // 1000 tables @ 1000 rows @ 10 columns = 10 million 'cells'
 
 // 1000 tables @ 100 rows each @ 100 columns == 10 million cells
+
+------------------------------
+gameplay notes - Aug 12
+
+- Player clicks mine, has diffusion kits, they may diffuse or
+choose to step off of mine with a 50% chance of it exploding.
+- If it explodes, either game over or lose a life
+- If lives are used, they can build up diffusion kits
 

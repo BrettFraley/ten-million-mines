@@ -56,3 +56,15 @@ function testHugeArrayOfEmptyObjects() {
 // You can change it at compile time to values as large as 32767.
 // On the other hand, many experienced database designers will argue
 // that a well-normalized database will never need more than 100 columns in a table.
+
+// Pop up UI design notes and tests
+
+// Display div where top left of div is at the cursor coords
+// Way to close on actions taken
+function initActionBox(action, mode) {
+    const box = document.createElement('action-box')
+}
+
+
+
+
