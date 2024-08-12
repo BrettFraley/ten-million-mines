@@ -7,9 +7,8 @@ const dom = {
     }
 }
 
-// generateField returns a 'field' element 
-// containing  all rows and game 'cells'
-// NOTE: TODO move mine gen functions here within gen field
+// generateField returns a 'field' element
+// containing  all rows and game 'cells'.
 const generateField = config => {
 
     const buildRowCells = (amt) => {
@@ -30,19 +29,23 @@ const generateField = config => {
 
     // Calls genRow and appends each row to the DOM
     const buildField = fieldSize => {
+        console.time()
         for (let i = 0; i < fieldSize; i++) {
             genRow(i) 
         }
+        console.timeEnd()
     }
 
     buildField(config.FIELD_ROW_COUNT)
     return dom.getEl('field')
 }
 
+// NOTE: Need to keep row cell count at 2000 or less..
 const CONFIG = {
-    FIELD_ROW_COUNT: 100,
-    FIELD_ROW_CELL_COUNT: 100,
+    FIELD_ROW_COUNT: 1000,
+    FIELD_ROW_CELL_COUNT: 1000,
     MINE_DENSITY_PERCENTAGE: 20,
+    GAME_SOURCE: 'client' // client or server switch
 }
 
 const beginButton = dom.getEl('load-field')
@@ -55,6 +58,7 @@ const mineGame = {
     init: () => {
 
         let field = generateField(CONFIG)
+        const mines = mineGame.generateMines()
         
         field.addEventListener('click', () => {
             const selection = document.getSelection()
@@ -119,7 +123,7 @@ const mineGame = {
     // Generate the mine field data. 
     // NOTE: Going to ignore that there could be dupes, unimportant.
     generateMines: () => {
-        let mines = mineGame.buildMineData()
+        let mines = mineGame.prepMineData() // An empty mine-data structure
         const totalMines = mineGame.getTotalMines(CONFIG)
 
         for (let i = 0; i < totalMines; i++) {
@@ -131,7 +135,7 @@ const mineGame = {
         return mines
     },
 
-    buildMineData: () => {
+    prepMineData: () => {
         let rowStructure = {}
 
         for (let i = 0; i < CONFIG.FIELD_ROW_COUNT; i++) {
@@ -141,6 +145,3 @@ const mineGame = {
     }
 
 }
-
-mineGame.init()
-

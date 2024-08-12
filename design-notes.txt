@@ -41,7 +41,6 @@ Okay... 10,000 pre elements is fine.. browser wants to crash
         at unresponsive script at 10x at 100k pre elements...
         YEP..so no go on 100k html elements
 
-
 ------
 getSelection...etc NOTES
 -----------------
@@ -73,8 +72,6 @@ string and remove the injected <pre>
 Do I create a <pre> row id with index, assign pre id and 
 lass in order to alter via CSS?
 --------------------------------------------------------------
-
-
 
 ----------------
 Front End Flow
@@ -142,8 +139,6 @@ clip-path: polygon(0 0, 53% 49%, 96% 57%, 0 100%, 74% 92%, 100% 74%, 0 54%, 100%
 AUG 10th STATUS NOTES:
 --------------------------
 
-
-
 TODAY:
 - Review where I'm at
 - Define next steps
@@ -153,16 +148,39 @@ TODAY:
 NEXT STEPS
 -----------
 - call game init when begin button is clicked
+      DONE - but this will actually load current game data/state [DONE]
 
 - think about moving current mine gen stuff
 to an object just for dev/testing...Make it
 switchable between using the server generated game
 and client generated...for dev..
 
+- Do some sanity checks on large string/rowSize operation
+in order to help determine how large is maybe too large..
+For instance, we probably don't want 10,000 span elements.. [DONE BUT TO BE CONTINUUED]
+---------------------------------------------
+YOU ARE HERE...add some stats.. then begin server ....
 - consider UI / basic stats and basic menu 
 earlier than later so they're there
 
 - Build the SSE server and field update 
 endpoint with a single DB / limited mine density
 of 20% and 10,000 'field cells'
+
+---------------------------------------
+Notes form initial sanity checks:
+
+// on string, array, and array of objects size vs performance
+//------------------------
+// NOTE: See info at bottom on SQLite max columns
+// So far, it seems reasonable to do what I want
+// to do with 10,000 char strings, but this should
+// probably stay within the 2000 column SQLite default limit.
+// This means 5,000 rows (spans) <- which I don't like
+// containing 2,000 char strings for 10 million
+
+// 10 Databases, 100 tables each = 1000 tables
+// 1000 tables @ 1000 rows @ 10 columns = 10 million 'cells'
+
+// 1000 tables @ 100 rows each @ 100 columns == 10 million cells
 
