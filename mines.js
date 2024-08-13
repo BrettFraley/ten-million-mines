@@ -112,21 +112,23 @@ const mineGame = {
 
     },
 
+    hasKits: () => mineGame.playerStats.diffKits > 0,
+    resetDecision: () => mineGame.playerStats.decision = '',
+
     init: () => {
 
         let field = generateField(CONFIG)
         const mines = mineGame.generateMines()
         const kits = mineGame.generateKits()
 
-        console.log(kits)
-
         diffuseButton.addEventListener('click', mineGame.diffuse, false)
         stepOffButton.addEventListener('click', mineGame.stepOff, false)
         
+        // Text in a row is highlighted or clicked.
         field.addEventListener('click', e => {
             const selection = document.getSelection()
             const cursor = dom.getCursor(e)
-            // text in a row is highlighted    
+            
             if (selection.type === "Range" || selection.type === "Caret") {
 
                 // A single cell is highlighted, and the offset is -1, 0, or 1 
@@ -141,14 +143,16 @@ const mineGame = {
                     cellIndex -= offsetRange === -1 ? 1 : 0
 
                     // It's an 'undisturbed' "#" char
-                     if (mineGame.selectionCharIs(CONFIG.FIELD_CHAR, selection, cellIndex)) {
+                    if (mineGame.selectionCharIs(CONFIG.FIELD_CHAR, selection, cellIndex)) {
 
                         const row = selection.baseNode.parentElement
                         const rowId = row.attributes.id.value.split('-')[0]
 
-                        const isMine = mines[rowId].indexOf(cellIndex) > -1
+                        let isMine = mines[rowId].indexOf(cellIndex) > -1
                         const isKit = kits[rowId].indexOf(cellIndex) > -1
 
+                        // hack to fix
+                        isMine = isMine && !isKit
                         mineGame.updateFieldRowCell(rowId, cellIndex, isMine, isKit, cursor)
                     }
                 }
@@ -156,40 +160,17 @@ const mineGame = {
         }, false)
     },
 
-    // Replace char with * if mine or space if cleared.
-
-    // TODO: call service with changed cell
-    // TODO: potentially splitting and joining a 1000 char
-    // or more string, so test with substr or alternate appraoches
-
     updateFieldRowCell: (rowId, idx, isMine, isKit, click) => {
-        let newChar = isMine? CONFIG.MINE_CHAR : CONFIG.CLEAR_CHAR
-        newChar = isKit? CONFIG.KIT_CHAR : CONFIG.KIT_CHAR
 
-        const row = dom.getEl(`${rowId}-mine-field-row`)
-        let newRow = row.innerText.split('')
-        newRow[idx] = newChar
-        row.innerText = newRow.join('')
+        const newChar = isMine ? CONFIG.MINE_CHAR :
+                        isKit ? CONFIG.KIT_CHAR :
+                        CONFIG.CLEAR_CHAR
 
-        // stats
-        if (isMine) {
-
-            // if no diffusion kits, explode
-
-            // TODO: If has diffusion kits, prompt for decision\
-            // Should pause waiting decision to return
-            const decision = mineGame.displayActionBox('mine', click.x, click.y)
-
-            // console.log(`player chose: ${decision}`)
-            // mineGame.playerStats.decision = "" // reset decision
-            // Player hits mine. You have x diffusion kits.
-            // Difuse the mine, or take your chances and step off it!
-            // Difuse | Step Off
-            
-            // if diffuse
-            // or if step off
-
-            mineGame.mineStats.explodedAmt += 1
+        if (!mineGame.hasKits) {
+            mineGame.explodeMine()
+        }
+        else if (isMine) {
+            mineGame.displayActionBox('mine', click.x, click.y)
         }
         else if (isKit) {
             mineGame.displayActionBox('kit', click.x, click.y)
@@ -198,8 +179,14 @@ const mineGame = {
         else {
             mineGame.mineStats.clearedAmt += 1
         }
+
         mineGame.mineStats.leftAmt -= 1
         mineGame.updateMineStats()
+
+        const row = dom.getEl(`${rowId}-mine-field-row`)
+        let newRow = row.innerText.split('')
+        newRow[idx] = newChar
+        row.innerText = newRow.join('')
     },
 
     updateMineStats: () => {
@@ -208,72 +195,66 @@ const mineGame = {
         minesLeft.innerText = `Left: ${mineGame.mineStats.leftAmt}` 
     },
 
-    resetDecision: () => {
-        console.log('reset: ')
-        mineGame.playerStats.decision = ''
-        console.log(`decision in reset: ${mineGame.playerStats.decision}`)
+    displayDecisionButtons: show => {
+        const displayVal = show ? 'inline-block' : 'none'
+        diffuseButton.style.display = displayVal
+        stepOffButton.style.display = displayVal
     },
 
+    // Display action box pop up.
+    // promptMode can be 'mine' or 'kit'
     displayActionBox: (promptMode, x, y) => {
-        // promptMode can be 'mine' or 'kit'
-        // Mine: if has kits
-        //      - diffuse or step off
-
         actionBox.style.display = "block"
         actionBox.style.position = "fixed"
         actionBox.style.left = `${x}px`
         actionBox.style.top = `${y}px`
 
+        // DEBUG: haven't triggered this yet
         if (promptMode === 'kit') {
+            mineGame.displayDecisionButtons(false)
             mineGame.playerStats.diffKits += 1
             actionBoxContent.innerText = 
             `You discovered a diffusion kit!`
         }
 
-        if (promptMode === 'mine') {
+        else if (promptMode === 'mine') {
+            mineGame.displayDecisionButtons(true)
+
             actionBoxContent.innerText = 
             `${mineGame.dialog.diffKitMessage()} ` + 
             `${mineGame.dialog.diffuseOrStepOffMessage}`
 
-            // TODO: handle this differently and account for
-            // a decision never being made
+            // TODO: Account for case of a decision never being made
             if (mineGame.playerStats.decision.length < 1) {
-                let interval = setInterval(() => {
-                    if (mineGame.playerStats.decision === 'diffuse') {
-                        console.log('got diffuse')
-                        console.log(interval)
-                        clearInterval(interval)
 
-                        return 'diffuse'
-                    }
-                    if (mineGame.playerStats.decision === 'stepOff') {
-                        console.log('got stepOff')
-                        clearInterval(interval)
-                
-                        return 'stepOff'
-                    }
+                let interval = setInterval(() => {
+                    const decision = mineGame.playerStats.decision
+                    clearInterval(interval)
+                    mineGame.resetDecision()
+                    return decision
                 }, 1000)
-                mineGame.resetDecision()
             }
         }
-        // if zero kits, explode => lives -= 1
-        // click difuse or step off
+
     },
 
     explodeMine: () => {
         mineGame.mineStats.explodedAmt += 1
         mineGame.playerStats.lives -= 1
-        
+        // animate explosion
     },
 
     diffuse: () => {
       mineGame.playerStats.decision = 'diffuse'
       mineGame.playerStats.diffKits -= 1;
       mineGame.mineStats.clearedAmt += 1;
+      actionBox.style.display = 'none'
     },
 
+    // TODO: Implement step off logic
     stepOff: () => {
         mineGame.playerStats.decision = 'stepOff'
+        actionBox.style.display = 'none'
     },
 
     selectionCharIs(char, selection, index) {
