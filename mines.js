@@ -12,7 +12,8 @@ const dom = {
             x: event.clientX,
             y: event.clientY
         }
-    }
+    },
+    getBodyWidth: () => document.body.clientWidth
 }
 
 // generateField returns a 'field' element
@@ -48,20 +49,20 @@ const generateField = config => {
     return dom.getEl('field')
 }
 
-// NOTE: Need to keep row cell count at 2000 or less..
 const CONFIG = {
     FIELD_CHAR: "#",
     MINE_CHAR: "*",
     CLEAR_CHAR: "_",
     DIFUSED_CHAR: "!",
     KIT_CHAR: "$",
-    FIELD_ROW_COUNT: 100,
+    FIELD_ROW_COUNT: 1000,
     FIELD_ROW_CELL_COUNT: 100,
     MINE_DENSITY_PERCENTAGE: 20,
     KIT_DENSITY_PERCENTAGE: 10,
     DIFF_KITS: 5,
     LIVES: 5,
-    GAME_SOURCE: 'client' // client or server switch
+    GAME_SOURCE: 'client',
+    DEV_SERVER_URL: 'localhost:8080/connect'
 }
 
 // DOM Elements
@@ -95,7 +96,8 @@ const mineGame = {
     playerStats: {
         diffKits: CONFIG.DIFF_KITS,
         lives: CONFIG.LIVES,
-        decision: ""
+        decision: "",
+        messageCount: 0
     },
 
     mineStats: {
@@ -115,7 +117,39 @@ const mineGame = {
     hasKits: () => mineGame.playerStats.diffKits > 0,
     resetDecision: () => mineGame.playerStats.decision = '',
 
+    // SSE connection with retry logic every 2 secs for 3 tries
+    connect: () => {
+        let events = new EventSource('http://localhost:8080/connect');
+        events.onerror = e => {
+            const retry = 3
+            let tries = 0
+
+            if (events.readyState === 0) {
+                
+                const retryInterval = setInterval(() => {
+                    if (events.readyState === 0 && tries < retry) {
+                        tries += 1
+                    }
+                    if (events.readyState === 0 && tries === retry) {
+                        events.close() // TODO: UI notification
+                        clearInterval(retryInterval)
+                        throw Error(`${e}: Issue connecting to mine game SSE server at /connect`)
+                    }
+                }, 2000)
+            }
+        }
+        // TODO: change to onmessage, onclosed, etc.
+        if (events.readyState) {
+            events.addEventListener('mine_feed', event => {
+                mineGame.playerStats.messageCount += 1;
+                console.log('Message Count: ', mineGame.playerStats.messageCount)
+                console.log('received:', event.data)
+            }, false)
+        }   
+    },
+
     init: () => {
+        mineGame.connect()
 
         let field = generateField(CONFIG)
         const mines = mineGame.generateMines()
@@ -204,6 +238,10 @@ const mineGame = {
     // Display action box pop up.
     // promptMode can be 'mine' or 'kit'
     displayActionBox: (promptMode, x, y) => {
+
+        // If action box X > 2/3 * 2 of screen, subtract action box width 
+        x -= x > (Math.floor(dom.getBodyWidth() / 3) * 2) ? 300 : 0
+
         actionBox.style.display = "block"
         actionBox.style.position = "fixed"
         actionBox.style.left = `${x}px`

@@ -199,3 +199,29 @@ NEXT:
 - Step off logic, more UI / design, animations, aesthetics
 - server
 
+SERVER DESIGN & IMPLEMENTATION
+------------------------------
+I should be able to get by without using a Crystal web framework.
+(update, going to use Kemal, for now until I write my own SSE stuff,
+because I already have a prior service using SSE and Kemal)
+
+- Need an update endpoint
+- A SSE connections / management service
+- SQLite DB driver
+- Setup and use Locust for load/perf testing
+    - this also provides stats and logs
+
+- Crystal/Kemal
+  -- Crystal game generator
+  -- Crystal SQL Service layer < - > eg: updates trigger new broadcasts
+  -- Endpoint for field updates (Websockets)
+  -- Broadcasts are SSE
+  -- Recent updates cache/log of changed cells so we don't repeat updates
+  -- How to check active open  SSE events
+  -- How to pool user connections and broadcast
+  -- Game Generation
+
+  Client:
+    -- May end up with a second JS file while keeping the old one
+    for client only gameplay and dev/testingcre
+
